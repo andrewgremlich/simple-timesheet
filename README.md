@@ -13,8 +13,3 @@ STRIPE_SECRET_KEY=
 ```
 
 This is also managed with Prisma SQLite, so the usual prisma commands are required to get the DB up and running.
-
-## Roadmap
-
-1. Timer
-2. Remove unused code.
