@@ -9,7 +9,7 @@ export default async function Home() {
 
 	return (
 		<div className="container mx-auto py-10 max-w-prose">
-			<H1>Welcome to the Timesheet App</H1>
+			<H1>Simple Timesheet</H1>
 			<Section>
 				<p className="text-gray-700">
 					A simple timesheet that integrates with Stripe in order to send
@@ -47,7 +47,7 @@ export default async function Home() {
 			)}
 
 			<Section>
-				<H2>Generate a new project?</H2>
+				<H2>New Project</H2>
 				<GenerateProject />
 			</Section>
 		</div>
