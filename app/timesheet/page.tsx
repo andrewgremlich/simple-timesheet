@@ -26,8 +26,6 @@ export default async function TimesheetPage({
 	const timesheet = await getTimesheetById(params.timesheetId || "");
 	const entries = timesheet ? timesheet.records : [];
 
-	console.log("Timesheet Page Params:", timesheet);
-
 	return (
 		<div className="container mx-auto py-10">
 			{/* Success/Error Messages */}

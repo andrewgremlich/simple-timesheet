@@ -14,7 +14,6 @@ export const CreateTimesheetRecord = ({
 	rate: number;
 	closed: boolean;
 }) => {
-	console.log(!closed);
 	return (
 		<form action={createTimesheetRecord} className="grid gap-6">
 			<input type="hidden" name="timesheetId" value={timesheetId} />
