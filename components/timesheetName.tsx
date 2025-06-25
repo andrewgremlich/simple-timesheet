@@ -7,7 +7,7 @@ export const TimesheetName = () => {
 	const [name, setName] = useState("");
 
 	return (
-		<div>
+		<div className="col-span-3">
 			<Label htmlFor="name">Timesheet Name</Label>
 			<div className="flex flex-row items-center">
 				<input
@@ -21,7 +21,7 @@ export const TimesheetName = () => {
 				/>
 				<button
 					type="button"
-					className="cursor-pointer ml-2 p-2 rounded hover:bg-gray-200"
+					className="cursor-pointer ml-2 p-2 rounded hover:bg-gray-500"
 					onClick={() => {
 						setName(`${new Date().toLocaleDateString()} Timesheet`);
 					}}

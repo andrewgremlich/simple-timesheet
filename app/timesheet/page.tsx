@@ -26,7 +26,7 @@ export default async function TimesheetPage({
 	const entries = timesheet ? timesheet.records : [];
 
 	return (
-		<div className="container mx-auto py-10">
+		<>
 			{/* Success/Error Messages */}
 			{params.success && (
 				<div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
@@ -47,7 +47,6 @@ export default async function TimesheetPage({
 						{timesheet?.name ?? "Timesheet Invoice Generator"}
 						{timesheet?.closed && " (Closed)"}
 					</H1>
-					<P>Enter your work hours and generate an invoice with Stripe</P>
 					<P>
 						{timesheet?.project.customerId &&
 							`Customer ID: ${timesheet.project.customerId}`}
@@ -87,6 +86,6 @@ export default async function TimesheetPage({
 					</form>
 				</CardFooter>
 			</Card>
-		</div>
+		</>
 	);
 }

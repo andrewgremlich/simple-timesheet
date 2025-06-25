@@ -27,7 +27,7 @@ export default async function ProjectPage({
 	}
 
 	return (
-		<div className="container mx-auto py-10">
+		<>
 			<Card>
 				<CardHeader>
 					<H1>{project.name}</H1>
@@ -51,26 +51,28 @@ export default async function ProjectPage({
 						<H2>Generate Timesheet for {project.name}</H2>
 						<form action={generateTimesheet}>
 							<input type="hidden" name="projectId" value={project.id} />
-							<TimesheetName />
-							<div>
-								<Label htmlFor="description">Timesheet Description</Label>
-								<input
-									type="text"
-									name="description"
-									placeholder="Timesheet Description"
-									className="flex h-10 rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
-								/>
+							<div className="grid gap-4 grid-cols-3">
+								<TimesheetName />
+								<div className="col-span-3">
+									<Label htmlFor="description">Timesheet Description</Label>
+									<input
+										type="text"
+										name="description"
+										placeholder="Timesheet Description"
+										className="flex h-10 rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
+									/>
+								</div>
+								<button
+									type="submit"
+									className="mt-2 p-2 bg-blue-500 text-white rounded grid-span-3"
+								>
+									Generate Timesheet
+								</button>
 							</div>
-							<button
-								type="submit"
-								className="mt-2 p-2 bg-blue-500 text-white rounded"
-							>
-								Generate Timesheet
-							</button>
 						</form>
 					</Section>
 				</CardContent>
 			</Card>
-		</div>
+		</>
 	);
 }

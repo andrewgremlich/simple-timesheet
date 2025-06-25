@@ -17,7 +17,7 @@ export const CreateTimesheetRecord = ({
 	closed: boolean;
 }) => {
 	return (
-		<form action={createTimesheetRecord} className="grid gap-6">
+		<form action={createTimesheetRecord}>
 			<input type="hidden" name="timesheetId" value={timesheetId} />
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
 				<div>
