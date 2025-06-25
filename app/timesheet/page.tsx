@@ -48,6 +48,10 @@ export default async function TimesheetPage({
 						{timesheet?.closed && " (Closed)"}
 					</H1>
 					<P>Enter your work hours and generate an invoice with Stripe</P>
+					<P>
+						{timesheet?.project.customerId &&
+							`Customer ID: ${timesheet.project.customerId}`}
+					</P>
 				</CardHeader>
 				<CardContent>
 					{timesheet ? (
