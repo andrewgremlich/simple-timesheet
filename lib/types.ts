@@ -43,6 +43,7 @@ export const InvoiceDetailsSchema = z.object({
     .positive("Final invoice amount must be a positive number"),
   memo: z.string().min(1, "Memo cannot be empty"),
   rate: z.number().positive("Rate must be a positive number"),
+  customerId: z.string().min(1, "Customer ID is required"),
 });
 
 export type InvoiceDetails = z.infer<typeof InvoiceDetailsSchema>;

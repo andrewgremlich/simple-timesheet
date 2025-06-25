@@ -3,6 +3,8 @@
 import { format } from "date-fns";
 import { PlusIcon } from "lucide-react";
 import { createTimesheetRecord } from "@/lib/actions";
+// import { Timer, TimerOff } from "lucide-react";
+
 import { Label } from "./label";
 
 export const CreateTimesheetRecord = ({
@@ -39,8 +41,12 @@ export const CreateTimesheetRecord = ({
 						min="0.25"
 						placeholder="Hours worked"
 						required
-						className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
+						className="mb-2 flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
 					/>
+					{/* <button type="button">
+						<Timer />
+						<TimerOff />
+					</button> */}
 				</div>
 				<div>
 					<Label htmlFor="rate">Rate ($/hr)</Label>

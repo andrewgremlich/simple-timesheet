@@ -8,6 +8,7 @@ export async function generateProject(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const rate = formData.get("rate") as string;
+  const customerId = formData.get("customerId") as string;
 
   if (!name) {
     throw new Error("Project name is required");
@@ -18,6 +19,7 @@ export async function generateProject(formData: FormData) {
       name,
       description: description || null,
       rate: parseFloat(rate) || null,
+      customerId: customerId || null,
       timesheets: {
         create: {
           name: `${new Date().toLocaleDateString()} Timesheet`,
@@ -220,6 +222,11 @@ export async function generateInvoice(formData: FormData) {
   "use server";
 
   const timesheetId = formData.get("timesheetId") as string;
+  const customerId = formData.get("customerId") as string;
+
+  if (!customerId) {
+    throw new Error("Customer ID is required");
+  }
 
   if (!timesheetId) {
     throw new Error("Timesheet ID is required");
@@ -257,6 +264,7 @@ export async function generateInvoice(formData: FormData) {
       finalInvoiceAmount: 0,
       memo: "",
       rate: records[0].rate,
+      customerId,
     }
   );
   const response = await fetch(`${process.env.URL}/api/create-invoice`, {

@@ -16,9 +16,9 @@ datasource db {
 
 model Project {
   id          String      @id @default(cuid())
-  customerId  String?
   name        String
   status      String      @default("active") // e.g., "active", "archived", "completed"
+  customerId  String?
   rate        Float?
   description String?
   createdAt   DateTime    @default(now())

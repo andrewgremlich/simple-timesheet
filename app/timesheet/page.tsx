@@ -6,7 +6,6 @@ import { GenerateProject } from "@/components/generateProject";
 import { H1, P } from "@/components/htmlElements";
 import { TimesheetTable } from "@/components/timesheetTable";
 import { generateInvoice, getTimesheetById } from "@/lib/actions";
-import { Clock, Timer, TimerOff } from "lucide-react";
 
 interface SearchParams {
 	invoice?: string;
@@ -49,11 +48,6 @@ export default async function TimesheetPage({
 						{timesheet?.closed && " (Closed)"}
 					</H1>
 					<P>Enter your work hours and generate an invoice with Stripe</P>
-					{/* TODO: STOPWATCH */}
-					{/* <button type="button">
-						<Timer className="h-4 w-4" />
-						<TimerOff className="h-4 w-4" />
-					</button> */}
 				</CardHeader>
 				<CardContent>
 					{timesheet ? (
@@ -72,6 +66,13 @@ export default async function TimesheetPage({
 				<CardFooter>
 					<form action={generateInvoice}>
 						<input type="hidden" name="timesheetId" value={timesheet?.id} />
+						{timesheet?.project.customerId && (
+							<input
+								type="hidden"
+								name="customerId"
+								value={timesheet?.project.customerId}
+							/>
+						)}
 						<button
 							type="submit"
 							disabled={entries.length === 0 || timesheet.closed}

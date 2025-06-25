@@ -17,5 +17,4 @@ This is also managed with Prisma SQLite, so the usual prisma commands are requir
 ## Roadmap
 
 1. Timer
-2. Customer connection to project
-3. Remove unused code.
+2. Remove unused code.

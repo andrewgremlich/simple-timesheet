@@ -20,6 +20,8 @@ export default async function ProjectPage({
 
 	const project = await getProjectById(projectId);
 
+	console.log("Project:", project);
+
 	if (!project) {
 		return <div className="container mx-auto py-10">Project not found.</div>;
 	}
@@ -31,6 +33,7 @@ export default async function ProjectPage({
 					<H1>{project.name}</H1>
 					<P>{project.description}</P>
 					<P>Rate: {project.rate}</P>
+					{project.customerId && <P>Customer ID: {project.customerId}</P>}
 				</CardHeader>
 				<CardContent>
 					<div className="mb-6">
