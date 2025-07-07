@@ -22,10 +22,11 @@ export default async function Home() {
 					<H2>All Timesheets</H2>
 
 					{allTimesheets.map((timesheet) => (
+						console.log(timesheet),
 						<CardPreview
 							key={timesheet.id}
-							title={timesheet.name}
-							description={timesheet.description ?? "No description provided"}
+							title={`${timesheet.project.name} - ${timesheet.name}`}
+							description={timesheet.project.description ?? "No description provided"}
 							url={`/timesheet?timesheetId=${timesheet.id}`}
 						/>
 					))}
