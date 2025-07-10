@@ -20,8 +20,6 @@ export default async function ProjectPage({
 
 	const project = await getProjectById(projectId);
 
-	console.log("Project:", project);
-
 	if (!project) {
 		return <div className="container mx-auto py-10">Project not found.</div>;
 	}
@@ -40,7 +38,7 @@ export default async function ProjectPage({
 						{project.timesheets.map((timesheet) => (
 							<CardPreview
 								key={timesheet.id}
-								title={timesheet.name}
+								title={`${timesheet.closed ? "✅ " : "❌ "}${timesheet.name}`}
 								description={timesheet.description ?? "No description provided"}
 								url={`/timesheet?timesheetId=${timesheet.id}`}
 							/>

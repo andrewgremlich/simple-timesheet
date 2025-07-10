@@ -44,8 +44,8 @@ export default async function TimesheetPage({
 			<Card>
 				<CardHeader>
 					<H1>
+						{timesheet?.closed ? "✅ " : "❌ "}
 						{timesheet?.name ?? "Timesheet Invoice Generator"}
-						{timesheet?.closed && " (Closed)"}
 					</H1>
 					<P>
 						{timesheet?.project.customerId &&
