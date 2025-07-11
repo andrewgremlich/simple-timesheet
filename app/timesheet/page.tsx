@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/card";
 import { CreateTimesheetRecord } from "@/components/createTimesheetRecord";
+import { GenerateInvoiceButton } from "@/components/generateInvoiceButton";
 import { GenerateProject } from "@/components/generateProject";
 import { H1, P } from "@/components/htmlElements";
 import { TimesheetTable } from "@/components/timesheetTable";
@@ -44,8 +45,8 @@ export default async function TimesheetPage({
 			<Card>
 				<CardHeader>
 					<H1>
-						{timesheet?.closed ? "✅ " : "❌ "}
 						{timesheet?.name ?? "Timesheet Invoice Generator"}
+						{timesheet?.closed && " (Closed)"}
 					</H1>
 					<P>
 						{timesheet?.project.customerId &&
@@ -76,13 +77,7 @@ export default async function TimesheetPage({
 								value={timesheet?.project.customerId}
 							/>
 						)}
-						<button
-							type="submit"
-							disabled={entries.length === 0 || timesheet.closed}
-							className="shrink-0 px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-md"
-						>
-							Generate Invoice
-						</button>
+						<GenerateInvoiceButton isClosed={timesheet?.closed} />
 					</form>
 				</CardFooter>
 			</Card>
