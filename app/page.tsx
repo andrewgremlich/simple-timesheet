@@ -7,6 +7,14 @@ export default async function Home() {
 	const allProjects = await getAllProjects();
 	const allTimesheets = await getAllTimesheets();
 
+	const customersRes = await fetch(`${process.env.URL}/api/customer`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+	const customers = await customersRes.json();
+
 	return (
 		<div className="container mx-auto py-10 max-w-prose">
 			<H1>Simple Timesheet</H1>
@@ -50,7 +58,7 @@ export default async function Home() {
 
 			<Section>
 				<H2>New Project</H2>
-				<GenerateProject />
+				<GenerateProject customers={customers} />
 			</Section>
 		</div>
 	);

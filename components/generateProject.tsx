@@ -2,10 +2,14 @@
 import { generateProject } from "@/lib/actions";
 import { Label } from "./label";
 
-export const GenerateProject = () => {
+export const GenerateProject = ({
+	customers,
+}: {
+	customers: { id: string; name: string; email: string }[];
+}) => {
 	return (
-		<form action={generateProject} className="grid grid-cols-2 gap-6">
-			<div className="col-span-2">
+		<form action={generateProject} className="grid grid-cols-3 gap-6">
+			<div className="col-span-3">
 				<Label htmlFor="name">Project Name</Label>
 				<input
 					id="name"
@@ -26,18 +30,23 @@ export const GenerateProject = () => {
 					className="flex h-10 rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
 				/>
 			</div>
-			<div className="col-span-1">
-				<Label htmlFor="customerId">Customer ID</Label>
-				<input
-					type="text"
+			<div className="col-span-2">
+				<Label htmlFor="customerId">Customer</Label>
+				<select
 					id="customerId"
 					name="customerId"
-					placeholder="Enter customer ID"
 					required
 					className="flex h-10 rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
-				/>
+				>
+					<option value="">Select a customer</option>
+					{customers.map((customer) => (
+						<option key={customer.id} value={customer.id}>
+							{customer.name} ({customer.email})
+						</option>
+					))}
+				</select>
 			</div>
-			<div className="col-span-2">
+			<div className="col-span-3">
 				<Label htmlFor="description">Project Description</Label>
 				<textarea
 					id="description"
