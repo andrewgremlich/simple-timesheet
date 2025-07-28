@@ -218,6 +218,29 @@ export async function deleteTimesheetRecord(formData: FormData) {
   revalidatePath("/");
 }
 
+export async function markReceivedPayment(formData: FormData) {
+  "use server";
+
+  const invoiceId = formData.get("invoiceId") as string;
+
+  if (!invoiceId) {
+    throw new Error("Invoice ID is required");
+  }
+
+  console.log("[Mark Received Payment] Marking invoice as paid:", invoiceId);
+
+  const response = await fetch(`${process.env.URL}/api/invoice/paid`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ invoiceId }),
+  });
+  const data = await response.json();
+
+  console.log("[Mark Received Payment] Response:", data);
+
+  revalidatePath("/");
+}
+
 export async function generateInvoice(formData: FormData) {
   "use server";
 
@@ -272,15 +295,15 @@ export async function generateInvoice(formData: FormData) {
   if (data.success) {
     await prisma.timesheet.update({
       where: { id: timesheetId },
-      data: { updatedAt: new Date(), closed: true },
+      data: { updatedAt: new Date(), closed: true, invoiceId: data.invoiceId },
     });
 
     redirect(
-      `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoice=${data.invoiceId}&success=true`
+      `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoiceId=${data.invoiceId}&success=true`
     );
   } else {
     redirect(
-      `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoice=${data.invoiceId}&success=false&error=couldnotcreateinvoice`
+      `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoiceId=${data.invoiceId}&success=false&error=couldnotcreateinvoice`
     );
   }
 }

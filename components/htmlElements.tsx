@@ -15,5 +15,5 @@ export const H3 = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const P = ({ children }: { children: React.ReactNode }) => {
-	return <p className="text-gray-700">{children}</p>;
+	return <p className="text-gray-700 mb-4">{children}</p>;
 };

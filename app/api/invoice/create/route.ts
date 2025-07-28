@@ -1,76 +1,57 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { type InvoiceDetails, InvoiceDetailsSchema } from "@/lib/types";
+import { InvoiceDetailsSchema } from "@/lib/types";
 
 export async function POST(request: Request) {
-	const { invoiceDetails }: { invoiceDetails: InvoiceDetails } =
-		await request.json();
+  console.log("[Create Invoice API] Received request");
 
-	try {
-		InvoiceDetailsSchema.parse(invoiceDetails);
-	} catch (validationError) {
-		console.error("Validation error:", validationError);
-		return NextResponse.json(
-			{ error: "Invalid invoice details format" },
-			{ status: 400 },
-		);
-	}
+  try {
+    const requestBody = await request.json();
+    const parsedData = InvoiceDetailsSchema.parse(requestBody);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const customer = await stripe.customers.retrieve(parsedData.customerId);
 
-	if (!process.env.STRIPE_SECRET_KEY) {
-		return NextResponse.json(
-			{ error: "Stripe is not configured" },
-			{ status: 500 },
-		);
-	}
+    // Create the invoice first as a draft
+    const invoice = await stripe.invoices.create({
+      customer: customer.id,
+      auto_advance: true,
+      collection_method: "send_invoice",
+      days_until_due: 30,
+      currency: "usd",
+      description: `${parsedData.memo}`,
+    });
 
-	try {
-		const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-		const customer = await stripe.customers.retrieve(invoiceDetails.customerId);
+    // Create the invoice item
+    await stripe.invoiceItems.create({
+      customer: customer.id,
+      invoice: invoice.id, // Explicitly attach to this invoice
+      amount: Math.round(parsedData.finalInvoiceAmount * 100), // Stripe expects amount in cents
+      currency: "usd",
+      metadata: {
+        totalHours: parsedData.totalHours.toString(),
+        rate: parsedData.rate.toString(),
+        finalInvoiceAmount: parsedData.finalInvoiceAmount.toString(),
+      },
+      description: `Software Engineering Services total hours ${parsedData.totalHours} at rate $${parsedData.rate} per hour.`,
+    });
 
-		// Create the invoice first as a draft
-		const invoice = await stripe.invoices.create({
-			customer: customer.id,
-			auto_advance: true,
-			collection_method: "send_invoice",
-			days_until_due: 30,
-			currency: "usd",
-			description: `${invoiceDetails.memo}`,
-		});
+    // Finalize the invoice to prepare it for sending
+    if (invoice.id) {
+      await stripe.invoices.finalizeInvoice(invoice.id);
 
-		// Create the invoice item
-		await stripe.invoiceItems.create({
-			customer: customer.id,
-			invoice: invoice.id, // Explicitly attach to this invoice
-			amount: Math.round(invoiceDetails.finalInvoiceAmount * 100), // Stripe expects amount in cents
-			currency: "usd",
-			metadata: {
-				totalHours: invoiceDetails.totalHours.toString(),
-				rate: invoiceDetails.rate.toString(),
-				finalInvoiceAmount: invoiceDetails.finalInvoiceAmount.toString(),
-			},
-			description: `Software Engineering Services total hours ${invoiceDetails.totalHours} at rate $${invoiceDetails.rate} per hour.`,
-		});
+      return NextResponse.json({
+        success: true,
+        invoiceId: invoice.id,
+        invoiceUrl: invoice.hosted_invoice_url,
+      });
+    }
 
-		// Finalize the invoice to prepare it for sending
-		if (invoice.id) {
-			await stripe.invoices.finalizeInvoice(invoice.id);
-
-			return NextResponse.json({
-				success: true,
-				invoiceId: invoice.id,
-				invoiceUrl: invoice.hosted_invoice_url,
-			});
-		}
-
-		throw new Error("Failed to create invoice");
-	} catch (error) {
-		console.error("Error creating invoice:", error);
-		return NextResponse.json(
-			{
-				error:
-					error instanceof Error ? error.message : "Failed to create invoice",
-			},
-			{ status: 500 },
-		);
-	}
+    throw new Error("Failed to create invoice");
+  } catch (createInvoiceError) {
+    console.error("Create Invoice error:", createInvoiceError);
+    return NextResponse.json(
+      { error: "Invalid invoice details format" },
+      { status: 400 }
+    );
+  }
 }
