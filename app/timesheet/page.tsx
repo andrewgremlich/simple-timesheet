@@ -1,28 +1,31 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: ids are for server side and not client */
 
+import { z } from "zod";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/card";
 import { CreateTimesheetRecord } from "@/components/createTimesheetRecord";
 import { GenerateInvoiceButton } from "@/components/generateInvoiceButton";
-import { GenerateProject } from "@/components/generateProject";
 import { H1, P } from "@/components/htmlElements";
 import { TimesheetTable } from "@/components/timesheetTable";
 import { generateInvoice, getTimesheetById } from "@/lib/actions";
 
-interface SearchParams {
-	invoice?: string;
-	success?: string;
-	error?: string;
-	timesheetId?: string;
-}
-
-interface TimesheetPageProps {
-	searchParams: Promise<SearchParams>;
-}
+const SearchParamsSchema = z.object({
+	invoice: z.string().optional(),
+	success: z.preprocess(
+		(val) => (val === "true" ? true : val === "false" ? false : val),
+		z.boolean().optional(),
+	),
+	error: z.string().optional(),
+	timesheetId: z.string().optional(),
+});
 
 export default async function TimesheetPage({
 	searchParams,
-}: TimesheetPageProps) {
-	const params = await searchParams;
+}: {
+	searchParams: Promise<Record<string, string | undefined>>;
+}) {
+	const rawParams = await searchParams;
+	const parseResult = SearchParamsSchema.safeParse(rawParams);
+	const params = parseResult.success ? parseResult.data : {};
 	const timesheet = await getTimesheetById(params.timesheetId || "");
 	const entries = timesheet ? timesheet.records : [];
 
@@ -54,7 +57,7 @@ export default async function TimesheetPage({
 					</P>
 				</CardHeader>
 				<CardContent>
-					{timesheet ? (
+					{timesheet && (
 						<>
 							<CreateTimesheetRecord
 								closed={timesheet.closed}
@@ -63,8 +66,6 @@ export default async function TimesheetPage({
 							/>
 							<TimesheetTable entries={entries} closed={timesheet.closed} />
 						</>
-					) : (
-						<GenerateProject />
 					)}
 				</CardContent>
 				<CardFooter>

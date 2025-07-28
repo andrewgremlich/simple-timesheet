@@ -238,11 +238,6 @@ export async function generateInvoice(formData: FormData) {
     include: { timesheet: true },
   });
 
-  await prisma.timesheet.update({
-    where: { id: timesheetId },
-    data: { updatedAt: new Date(), closed: true },
-  });
-
   if (records.length === 0) {
     throw new Error("No timesheet entries found");
   }
@@ -267,15 +262,25 @@ export async function generateInvoice(formData: FormData) {
       customerId,
     }
   );
-  const response = await fetch(`${process.env.URL}/api/create-invoice`, {
+  const response = await fetch(`${process.env.URL}/api/invoice/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ invoiceDetails }),
   });
   const data = await response.json();
 
-  // For demo purposes, redirect to a success page or show success message
-  redirect(
-    `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoice=${data.invoiceId}&success=true`
-  );
+  if (data.success) {
+    await prisma.timesheet.update({
+      where: { id: timesheetId },
+      data: { updatedAt: new Date(), closed: true },
+    });
+
+    redirect(
+      `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoice=${data.invoiceId}&success=true`
+    );
+  } else {
+    redirect(
+      `${process.env.URL}/timesheet?timesheetId=${timesheetId}&invoice=${data.invoiceId}&success=false&error=couldnotcreateinvoice`
+    );
+  }
 }
