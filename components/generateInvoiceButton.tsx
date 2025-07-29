@@ -11,7 +11,11 @@ export function GenerateInvoiceButton({ isClosed }: { isClosed?: boolean }) {
 			disabled={pending || isClosed}
 			className={`shrink-0 px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-md`}
 		>
-			{pending ? "Generating..." : "Generate Invoice"}
+			{pending
+				? "Generating..."
+				: !isClosed
+					? "Generate Invoice"
+					: "Invoice Closed"}
 		</button>
 	);
 }
