@@ -47,3 +47,9 @@ export const InvoiceDetailsSchema = z.object({
 });
 
 export type InvoiceDetails = z.infer<typeof InvoiceDetailsSchema>;
+
+export const Invoice = z.object({
+  invoiceId: z.string(),
+});
+
+export type Invoice = z.infer<typeof Invoice>;

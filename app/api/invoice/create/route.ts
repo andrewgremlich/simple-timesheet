@@ -3,8 +3,6 @@ import Stripe from "stripe";
 import { InvoiceDetailsSchema } from "@/lib/types";
 
 export async function POST(request: Request) {
-  console.log("[Create Invoice API] Received request");
-
   try {
     const requestBody = await request.json();
     const parsedData = InvoiceDetailsSchema.parse(requestBody);

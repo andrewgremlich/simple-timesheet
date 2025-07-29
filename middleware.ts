@@ -1,8 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 export default function middleware(request: NextRequest) {
-  console.log(`[Check Stripe Middleware] ${request.method} ${request.url}`);
-
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json(
       { error: "Stripe is not configured" },

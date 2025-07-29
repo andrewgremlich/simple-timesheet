@@ -33,6 +33,19 @@ export default async function TimesheetPage({
 	const timesheet = await getTimesheetById(params.timesheetId || "");
 	const entries = timesheet ? timesheet.records : [];
 
+	let invoiceData: { invoice: { status?: string } } = { invoice: {} };
+
+	if (timesheet?.invoiceId) {
+		const invoiceDataRes = await fetch(
+			`${process.env.URL}/api/invoice?invoiceId=${timesheet.invoiceId}`,
+			{
+				method: "GET",
+				headers: { "Content-Type": "application/json" },
+			},
+		);
+		invoiceData = await invoiceDataRes.json();
+	}
+
 	return (
 		<>
 			{/* Success/Error Messages */}
@@ -59,19 +72,29 @@ export default async function TimesheetPage({
 						{timesheet?.project.customerId &&
 							`Customer ID: ${timesheet.project.customerId}`}
 					</P>
-					{timesheet.invoiceId && (
+					{timesheet?.invoiceId && (
 						<form action={markReceivedPayment}>
-							<P>Invoice ID: {timesheet.invoiceId}</P>
+							<P>Invoice ID: {timesheet?.invoiceId}</P>
+							{invoiceData.invoice.status === "paid" && (
+								<P>Invoice has been marked as paid.</P>
+							)}
 							<input
 								type="hidden"
 								name="invoiceId"
-								value={timesheet.invoiceId}
+								value={timesheet?.invoiceId}
 							/>
 							<button
+								disabled={invoiceData.invoice.status === "paid"}
 								type="submit"
-								className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer"
+								className={`px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md  ${
+									invoiceData.invoice.status === "paid"
+										? "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
+										: "cursor-pointer"
+								}`}
 							>
-								Mark as Paid
+								{invoiceData.invoice.status === "paid"
+									? "Has been paid"
+									: "Mark as Paid"}
 							</button>
 						</form>
 					)}

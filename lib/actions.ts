@@ -227,16 +227,13 @@ export async function markReceivedPayment(formData: FormData) {
     throw new Error("Invoice ID is required");
   }
 
-  console.log("[Mark Received Payment] Marking invoice as paid:", invoiceId);
-
   const response = await fetch(`${process.env.URL}/api/invoice/paid`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ invoiceId }),
   });
-  const data = await response.json();
 
-  console.log("[Mark Received Payment] Response:", data);
+  await response.json();
 
   revalidatePath("/");
 }
@@ -288,7 +285,7 @@ export async function generateInvoice(formData: FormData) {
   const response = await fetch(`${process.env.URL}/api/invoice/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ invoiceDetails }),
+    body: JSON.stringify({ ...invoiceDetails }),
   });
   const data = await response.json();
 
