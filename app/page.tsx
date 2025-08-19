@@ -42,6 +42,15 @@ export default async function Home() {
 				</Section>
 			)}
 
+			<Section>
+				<dl>
+					<dt>✅</dt>
+					<dd>Closed</dd>
+					<dt>❌</dt>
+					<dd>Open</dd>
+				</dl>
+			</Section>
+
 			{allProjects.length > 0 && (
 				<Section>
 					<H2>Projects</H2>

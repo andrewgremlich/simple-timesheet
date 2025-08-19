@@ -1,7 +1,7 @@
-import { format } from "date-fns";
 import { TrashIcon } from "lucide-react";
 import { deleteTimesheetRecord } from "@/lib/actions";
 import type { TimesheetRecord } from "@/lib/generated/prisma";
+import { formatDate } from "@/lib/utils";
 
 export const TimesheetTable = ({
 	entries,
@@ -41,7 +41,7 @@ export const TimesheetTable = ({
 							{entries.map((entry) => (
 								<tr key={entry.id}>
 									<td className="px-4 py-3 text-sm text-gray-900">
-										{format(new Date(entry.date), "MMM d, yyyy")}
+										{formatDate(entry.date)}
 									</td>
 									<td className="px-4 py-3 text-sm text-gray-900 text-center">
 										{entry.hours}

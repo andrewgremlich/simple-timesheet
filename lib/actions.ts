@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { formatDate } from "./utils";
 
 export async function generateProject(formData: FormData) {
   "use server";
@@ -266,11 +267,9 @@ export async function generateInvoice(formData: FormData) {
     (acc, record) => {
       acc.totalHours += record.hours;
       acc.finalInvoiceAmount += record.amount;
-      acc.memo += `${new Date(
-        record.date
-      ).toLocaleDateString()} => ${record.hours.toFixed(2)}hrs => ${
-        record.description
-      }\n`;
+      acc.memo += `${formatDate(record.date)} => ${record.hours.toFixed(
+        2
+      )}hrs => ${record.description}\n`;
 
       return acc;
     },
