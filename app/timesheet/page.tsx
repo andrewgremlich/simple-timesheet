@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/nursery/useUniqueElementIds: ids are for server side and not client */
-
 import { z } from "zod";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/card";
 import { CreateTimesheetRecord } from "@/components/createTimesheetRecord";

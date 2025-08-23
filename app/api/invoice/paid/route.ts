@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
 		return NextResponse.json(
 			{ error: "Failed to mark invoice as paid" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	} catch (validationError) {
 		console.error("Validation error:", validationError);

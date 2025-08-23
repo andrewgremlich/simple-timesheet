@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
 	const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 	const customers = await stripe.customers.list({

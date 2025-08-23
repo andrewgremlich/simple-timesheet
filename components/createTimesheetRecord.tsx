@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/nursery/useUniqueElementIds: ids are for server side and not client */
-
 import { format } from "date-fns";
 import { PlusIcon } from "lucide-react";
 import { createTimesheetRecord } from "@/lib/actions";
@@ -23,7 +21,6 @@ export const CreateTimesheetRecord = ({
 				<div>
 					<Label htmlFor="date">Date</Label>
 					<input
-						id="date"
 						name="date"
 						type="date"
 						defaultValue={format(new Date(), "yyyy-MM-dd")}
@@ -34,7 +31,6 @@ export const CreateTimesheetRecord = ({
 				<div>
 					<Label htmlFor="hours">Hours</Label>
 					<input
-						id="hours"
 						name="hours"
 						type="number"
 						step="0.25"
@@ -51,7 +47,6 @@ export const CreateTimesheetRecord = ({
 				<div>
 					<Label htmlFor="rate">Rate ($/hr)</Label>
 					<input
-						id="rate"
 						name="rate"
 						type="number"
 						step="0.01"
@@ -66,7 +61,6 @@ export const CreateTimesheetRecord = ({
 					<Label htmlFor="description">Description</Label>
 					<div className="flex space-x-2">
 						<input
-							id="description"
 							name="description"
 							placeholder="Work description"
 							required

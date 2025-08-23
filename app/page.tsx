@@ -1,19 +1,16 @@
 import { CardPreview } from "@/components/cardPreview";
 import { GenerateProject } from "@/components/generateProject";
 import { H1, H2, Section } from "@/components/htmlElements";
-import { getAllProjects, getAllTimesheets } from "@/lib/actions";
+import {
+	getAllCustomers,
+	getAllProjects,
+	getAllTimesheets,
+} from "@/lib/actions";
 
 export default async function Home() {
 	const allProjects = await getAllProjects();
 	const allTimesheets = await getAllTimesheets();
-
-	const customersRes = await fetch(`${process.env.URL}/api/customer`, {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
-	const customers = await customersRes.json();
+	const customers = await getAllCustomers();
 
 	return (
 		<div className="container mx-auto py-10 max-w-prose">

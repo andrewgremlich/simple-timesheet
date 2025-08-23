@@ -303,3 +303,26 @@ export async function generateInvoice(formData: FormData) {
     );
   }
 }
+
+export async function getAllCustomers() {
+  "use server";
+  
+  const Stripe = (await import("stripe")).default;
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+  try {
+    const customers = await stripe.customers.list({
+      limit: 100,
+    });
+    
+    // Transform Stripe customer data to match expected format
+    return customers.data.map(customer => ({
+      id: customer.id,
+      name: customer.name || customer.email || "Unknown",
+      email: customer.email || "",
+    }));
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
