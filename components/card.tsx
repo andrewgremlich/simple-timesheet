@@ -52,7 +52,5 @@ export {
 	Card,
 	CardHeader,
 	CardFooter,
-	type CardTitle,
-	type CardDescription,
 	CardContent,
 };
