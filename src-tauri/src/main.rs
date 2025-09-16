@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    step_in_time_lib::run()
+    simple_timesheet_lib::run()
 }

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "step-in-time",
+  "productName": "simple-timesheet",
   "version": "0.1.0",
-  "identifier": "dev.gremlich.step-in-time",
+  "identifier": "dev.gremlich.simple-timesheet",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,9 +12,9 @@
   "app": {
     "windows": [
       {
-        "title": "step-in-time",
+        "title": "simple-timesheet",
         "width": 800,
-        "height": 600
+        "height": 1200
       }
     ],
     "security": {

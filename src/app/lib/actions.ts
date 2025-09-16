@@ -1,15 +1,18 @@
-import { db } from "./db";
+import { execute, select } from "./db";
+import type { Customer, Project, Timesheet } from "./types";
 
 export async function generateProject(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const rate = formData.get("rate") as string;
   const customerId = formData.get("customerId") as string;
+
   if (!name) {
     throw new Error("Project name is required");
   }
-  const result = await db.execute(
-    "INSERT INTO project (name, description, rate, customerId) VALUES (?, ?, ?, ?)",
+
+  const result = await execute(
+    "INSERT INTO projects (name, description, rate, customerId) VALUES ($1, $2, $3, $4)",
     [
       name,
       description || null,
@@ -18,69 +21,49 @@ export async function generateProject(formData: FormData) {
     ]
   );
   const projectId = result.lastInsertId;
-  await db.execute(
-    "INSERT INTO timesheet (projectId, name, description) VALUES (?, ?, ?)",
+
+  await execute(
+    "INSERT INTO timesheets (projectId, name, description) VALUES ($1, $2, $3)",
     [
       projectId,
       `${new Date().toLocaleDateString()} Timesheet`,
       `Timesheet for project ${name}`,
     ]
   );
+
+  const [project]: Project[] = await select(
+    "SELECT * FROM projects WHERE id = $1",
+    [projectId]
+  );
+  const [timesheet]: Timesheet[] = await select(
+    "SELECT * FROM timesheets WHERE projectId = $1 ORDER BY id DESC LIMIT 1",
+    [projectId]
+  );
+
+  return { project, timesheet };
 }
 
 export async function getAllProjects() {
-  const projects = await db.select(
-    `SELECT p.*, t.id as timesheetId, t.name as timesheetName, t.description as timesheetDescription,
-            r.id as recordId, r.date as recordDate, r.hours as recordHours, r.description as recordDescription, r.rate as recordRate, r.amount as recordAmount
-     FROM project p
-     LEFT JOIN timesheet t ON t.projectId = p.id
-     LEFT JOIN timesheetRecord r ON r.timesheetId = t.id`
+  const projects = await select(
+    `SELECT *
+    from projects p`
   );
-  const map = new Map();
-  for (const row of projects) {
-    if (!map.has(row.id)) {
-      map.set(row.id, { ...row, timesheets: [] });
-    }
-    const project = map.get(row.id);
-    if (row.timesheetId) {
-      let timesheet = project.timesheets.find(
-        (ts) => ts.id === row.timesheetId
-      );
-      if (!timesheet) {
-        timesheet = {
-          id: row.timesheetId,
-          name: row.timesheetName,
-          description: row.timesheetDescription,
-          records: [],
-        };
-        project.timesheets.push(timesheet);
-      }
-      if (row.recordId) {
-        timesheet.records.push({
-          id: row.recordId,
-          date: row.recordDate,
-          hours: row.recordHours,
-          description: row.recordDescription,
-          rate: row.recordRate,
-          amount: row.recordAmount,
-        });
-      }
-    }
-  }
-  return Array.from(map.values());
+
+  return projects;
 }
 
 export async function getProjectById(projectId: string) {
   if (!projectId) {
     throw new Error("Project ID is required");
   }
-  const rows = await db.select(
+
+  const rows = await select(
     `SELECT p.*, t.id as timesheetId, t.name as timesheetName, t.description as timesheetDescription,
             r.id as recordId, r.date as recordDate, r.hours as recordHours, r.description as recordDescription, r.rate as recordRate, r.amount as recordAmount
      FROM project p
      LEFT JOIN timesheet t ON t.projectId = p.id
      LEFT JOIN timesheetRecord r ON r.timesheetId = t.id
-     WHERE p.id = ?`,
+     WHERE p.id = $1`,
     [projectId]
   );
   if (rows.length === 0) {
@@ -118,10 +101,12 @@ export async function getProjectById(projectId: string) {
 
 export async function deleteProject(formData: FormData) {
   const id = formData.get("id") as string;
+
   if (!id) {
     throw new Error("Project ID is required");
   }
-  await db.execute("DELETE FROM project WHERE id = ?", [id]);
+
+  await execute("DELETE FROM project WHERE id = $1", [id]);
 }
 
 export async function generateTimesheet(formData: FormData) {
@@ -131,15 +116,15 @@ export async function generateTimesheet(formData: FormData) {
   if (!projectId) {
     throw new Error("Project ID is required");
   }
-  await db.execute(
-    "INSERT INTO timesheet (projectId, name, description) VALUES (?, ?, ?)",
+  await execute(
+    "INSERT INTO timesheet (projectId, name, description) VALUES ($1, $2, $3)",
     [
       projectId,
       name || `Timesheet for Project ${projectId}`,
       description || `Timesheet for project with ID ${projectId}`,
     ]
   );
-  await db.execute("UPDATE project SET updatedAt = ? WHERE id = ?", [
+  await execute("UPDATE project SET updatedAt = ? WHERE id = ?", [
     new Date().toISOString(),
     projectId,
   ]);
@@ -149,12 +134,12 @@ export async function getTimesheetById(timesheetId: string) {
   if (!timesheetId) {
     throw new Error("Timesheet ID is required");
   }
-  const rows = await db.select(
+  const rows = await select(
     `SELECT t.*, r.id as recordId, r.date as recordDate, r.hours as recordHours, r.description as recordDescription, r.rate as recordRate, r.amount as recordAmount, p.id as projectId, p.name as projectName
      FROM timesheet t
      LEFT JOIN timesheetRecord r ON r.timesheetId = t.id
      LEFT JOIN project p ON t.projectId = p.id
-     WHERE t.id = ?`,
+     WHERE t.id = $1`,
     [timesheetId]
   );
   if (rows.length === 0) {
@@ -181,7 +166,7 @@ export async function getTimesheetById(timesheetId: string) {
 }
 
 export async function getAllTimesheets() {
-  const rows = await db.select(
+  const rows = await select(
     `SELECT t.*, r.id as recordId, r.date as recordDate, r.hours as recordHours, r.description as recordDescription, r.rate as recordRate, r.amount as recordAmount, p.id as projectId, p.name as projectName
      FROM timesheet t
      LEFT JOIN timesheetRecord r ON r.timesheetId = t.id
@@ -222,7 +207,7 @@ export async function createTimesheetRecord(formData: FormData) {
   if (!timesheetId || !date || !hours || !description || !rate) {
     throw new Error("All fields are required");
   }
-  const timesheet = await db.select("SELECT * FROM timesheet WHERE id = ?", [
+  const timesheet = await select("SELECT * FROM timesheet WHERE id = $1", [
     timesheetId,
   ]);
   if (timesheet.length === 0) {
@@ -231,11 +216,11 @@ export async function createTimesheetRecord(formData: FormData) {
   const hoursFloat = parseFloat(hours);
   const rateFloat = parseFloat(rate);
   const amount = hoursFloat * rateFloat;
-  await db.execute(
-    "INSERT INTO timesheetRecord (timesheetId, date, hours, description, rate, amount) VALUES (?, ?, ?, ?, ?, ?)",
+  await execute(
+    "INSERT INTO timesheetRecord (timesheetId, date, hours, description, rate, amount) VALUES ($1, $2, $3, $4, $5, $6)",
     [timesheetId, date, hoursFloat, description, rateFloat, amount]
   );
-  await db.execute("UPDATE timesheet SET updatedAt = ? WHERE id = ?", [
+  await execute("UPDATE timesheet SET updatedAt = $1 WHERE id = $2", [
     new Date().toISOString(),
     timesheetId,
   ]);
@@ -246,7 +231,7 @@ export async function deleteTimesheetRecord(formData: FormData) {
   if (!id) {
     throw new Error("Record ID is required");
   }
-  await db.execute("DELETE FROM timesheetRecord WHERE id = ?", [id]);
+  await execute("DELETE FROM timesheetRecord WHERE id = $1", [id]);
 }
 
 export async function markReceivedPayment(formData: FormData) {
@@ -254,7 +239,7 @@ export async function markReceivedPayment(formData: FormData) {
   if (!invoiceId) {
     throw new Error("Invoice ID is required");
   }
-  await db.execute("UPDATE invoice SET paid = 1 WHERE id = ?", [invoiceId]);
+  await execute("UPDATE invoice SET paid = 1 WHERE id = $1", [invoiceId]);
 }
 
 export async function generateInvoice(formData: FormData) {
@@ -266,8 +251,8 @@ export async function generateInvoice(formData: FormData) {
   if (!timesheetId) {
     throw new Error("Timesheet ID is required");
   }
-  const records = await db.select(
-    "SELECT * FROM timesheetRecord WHERE timesheetId = ?",
+  const records = await select(
+    "SELECT * FROM timesheetRecord WHERE timesheetId = $1",
     [timesheetId]
   );
   if (records.length === 0) {
@@ -290,8 +275,8 @@ export async function generateInvoice(formData: FormData) {
       customerId,
     }
   );
-  const invoiceResult = await db.execute(
-    "INSERT INTO invoice (customerId, totalHours, finalInvoiceAmount, memo, rate) VALUES (?, ?, ?, ?, ?)",
+  const invoiceResult = await execute(
+    "INSERT INTO invoice (customerId, totalHours, finalInvoiceAmount, memo, rate) VALUES ($1, $2, $3, $4, $5)",
     [
       customerId,
       invoiceDetails.totalHours,
@@ -301,17 +286,33 @@ export async function generateInvoice(formData: FormData) {
     ]
   );
   const invoiceId = invoiceResult.lastInsertId;
-  await db.execute(
-    "UPDATE timesheet SET updatedAt = ?, closed = 1, invoiceId = ? WHERE id = ?",
+  await execute(
+    "UPDATE timesheet SET updatedAt = $1, closed = 1, invoiceId = $2 WHERE id = $3",
     [new Date().toISOString(), invoiceId, timesheetId]
   );
 }
 
-export async function getAllCustomers() {
-  const customers = await db.select("SELECT * FROM customer");
-  return customers.map((customer) => ({
-    id: customer.id,
-    name: customer.name || customer.email || "Unknown",
-    email: customer.email || "",
-  }));
+export async function getAllCustomers(key: string | null): Promise<Customer[]> {
+  if (!key) {
+    throw new Error("Stripe key is required to fetch customers");
+  }
+
+  const Stripe = (await import("stripe")).default;
+  const stripe = new Stripe(key);
+
+  try {
+    const customers = await stripe.customers.list({
+      limit: 100,
+    });
+
+    // Transform Stripe customer data to match expected format
+    return customers.data.map((customer) => ({
+      id: customer.id,
+      name: customer.name || customer.email || "Unknown",
+      email: customer.email || "",
+    }));
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
 }

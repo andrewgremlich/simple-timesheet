@@ -1,5 +1,23 @@
 import { z } from "zod";
 
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface Project {
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+  name: string;
+  description?: string | null;
+  status?: string | null;
+  rate?: number | null;
+  customerId?: string | null;
+  customer?: Customer;
+}
+
 export interface Timesheet {
   id: string;
   name: string;

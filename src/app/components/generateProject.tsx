@@ -1,13 +1,26 @@
-import { generateProject } from "@/lib/actions";
+// import { generateProject } from "@/lib/actions";
+import { generateProject } from "../lib/actions";
+import { useSimpletimesheetStore } from "../lib/store";
+import type { Customer } from "../lib/types";
 import { Label } from "./label";
 
-export const GenerateProject = ({
-	customers,
-}: {
-	customers: { id: string; name: string; email: string }[];
-}) => {
+export const GenerateProject = ({ customers }: { customers: Customer[] }) => {
+	const { addProject, addTimesheet } = useSimpletimesheetStore();
+
 	return (
-		<form action={generateProject} className="grid grid-cols-3 gap-6">
+		<form
+			className="grid grid-cols-3 gap-6"
+			onSubmit={(e) => {
+				e.preventDefault();
+
+				const formData = new FormData(e.currentTarget);
+
+				generateProject(formData).then(({ project, timesheet }) => {
+					addProject(project);
+					addTimesheet(timesheet);
+				});
+			}}
+		>
 			<div className="col-span-3">
 				<Label htmlFor="name">Project Name</Label>
 				<input
