@@ -16,6 +16,7 @@ export const GenerateProject = ({ customers }: { customers: Customer[] }) => {
 				const formData = new FormData(e.currentTarget);
 
 				generateProject(formData).then(({ project, timesheet }) => {
+					console.log({ project, timesheet });
 					addProject(project);
 					addTimesheet(timesheet);
 				});

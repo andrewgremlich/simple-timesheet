@@ -22,6 +22,10 @@ export interface Timesheet {
   id: string;
   name: string;
   description?: string | null;
+  projectId: string;
+  projectName: string;
+  projectDescription?: string | null;
+  closed: boolean;
   createdAt: Date;
   updatedAt: Date;
   records: TimesheetRecord[];

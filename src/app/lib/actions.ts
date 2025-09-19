@@ -43,8 +43,8 @@ export async function generateProject(formData: FormData) {
   return { project, timesheet };
 }
 
-export async function getAllProjects() {
-  const projects = await select(
+export async function getAllProjects(): Promise<Project[]> {
+  const projects: Project[] = await select(
     `SELECT *
     from projects p`
   );
@@ -165,37 +165,17 @@ export async function getTimesheetById(timesheetId: string) {
   return timesheet;
 }
 
-export async function getAllTimesheets() {
-  const rows = await select(
-    `SELECT t.*, r.id as recordId, r.date as recordDate, r.hours as recordHours, r.description as recordDescription, r.rate as recordRate, r.amount as recordAmount, p.id as projectId, p.name as projectName
-     FROM timesheet t
-     LEFT JOIN timesheetRecord r ON r.timesheetId = t.id
-     LEFT JOIN project p ON t.projectId = p.id
+export async function getAllTimesheets(): Promise<Timesheet[]> {
+  const rows: Timesheet[] = await select(
+    `SELECT t.*, p.name as projectName, p.description as projectDescription FROM timesheets t
+     LEFT JOIN projects p ON t.projectId = p.id 
      ORDER BY t.updatedAt DESC
      LIMIT 5`
   );
-  const map = new Map();
-  for (const row of rows) {
-    if (!map.has(row.id)) {
-      map.set(row.id, {
-        ...row,
-        records: [],
-        project: { id: row.projectId, name: row.projectName },
-      });
-    }
-    const timesheet = map.get(row.id);
-    if (row.recordId) {
-      timesheet.records.push({
-        id: row.recordId,
-        date: row.recordDate,
-        hours: row.recordHours,
-        description: row.recordDescription,
-        rate: row.recordRate,
-        amount: row.recordAmount,
-      });
-    }
-  }
-  return Array.from(map.values());
+
+  console.log(rows);
+
+  return rows;
 }
 
 export async function createTimesheetRecord(formData: FormData) {
