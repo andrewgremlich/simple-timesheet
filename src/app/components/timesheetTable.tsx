@@ -1,4 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TrashIcon } from "lucide-react";
+import { useSimpletimesheetStore } from "@/lib/store";
 import { deleteTimesheetRecord } from "../lib/dbClient";
 import type { TimesheetRecord } from "../lib/types";
 import { formatDate } from "../lib/utils";
@@ -11,6 +13,16 @@ export const TimesheetTable = ({
 	closed: boolean;
 }) => {
 	const totalAmount = entries.reduce((total, entry) => total + entry.amount, 0);
+	const { activeTimesheetId } = useSimpletimesheetStore();
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation({
+		mutationFn: async (formData: FormData) => {
+			await deleteTimesheetRecord(formData);
+			await queryClient.invalidateQueries({
+				queryKey: ["timesheet", activeTimesheetId],
+			});
+		},
+	});
 
 	return (
 		<div className="mt-8 space-y-4">
@@ -60,7 +72,7 @@ export const TimesheetTable = ({
 											onSubmit={(evt) => {
 												evt.preventDefault();
 												const formData = new FormData(evt.currentTarget);
-												deleteTimesheetRecord(formData);
+												mutate(formData);
 											}}
 											className="inline"
 										>
