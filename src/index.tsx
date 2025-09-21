@@ -1,12 +1,16 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Nav } from "@/components/nav";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { Nav } from "@/components/Nav";
+import { ProjectModal } from "@/components/ProjectModal";
 import { SettingsModal } from "@/components/SettingsModal";
 import { TimesheetModal } from "@/components/TimesheetModal";
-import { ProjectModal } from "@/components/ProjectModal";
 
-import { App } from "./app/index";
+import { App } from "@/index";
+
+const queryClient = new QueryClient();
 
 const rootElement = document.getElementById("root");
 
@@ -16,10 +20,21 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
 	<StrictMode>
-		<TimesheetModal />
-		<ProjectModal />
-		<SettingsModal />
-		<Nav />
-		<App />
+		<QueryClientProvider client={queryClient}>
+			<TimesheetModal />
+			<ProjectModal />
+			<SettingsModal />
+			<Nav />
+			<ErrorBoundary
+				fallback={(error) => (
+					<div className="error-boundary">
+						<h2>Something went wrong:</h2>
+						<pre>{error?.message}</pre>
+					</div>
+				)}
+			>
+				<App />
+			</ErrorBoundary>
+		</QueryClientProvider>
 	</StrictMode>,
 );

@@ -1,7 +1,7 @@
 import { TrashIcon } from "lucide-react";
-import { deleteTimesheetRecord } from "@/lib/actions";
-import type { TimesheetRecord } from "@/lib/generated/prisma";
-import { formatDate } from "@/lib/utils";
+import { deleteTimesheetRecord } from "../lib/dbClient";
+import type { TimesheetRecord } from "../lib/types";
+import { formatDate } from "../lib/utils";
 
 export const TimesheetTable = ({
 	entries,
@@ -56,7 +56,14 @@ export const TimesheetTable = ({
 										${entry.amount.toFixed(2)}
 									</td>
 									<td className="px-4 py-3 text-sm text-gray-900 text-right">
-										<form action={deleteTimesheetRecord} className="inline">
+										<form
+											onSubmit={(evt) => {
+												evt.preventDefault();
+												const formData = new FormData(evt.currentTarget);
+												deleteTimesheetRecord(formData);
+											}}
+											className="inline"
+										>
 											<input type="hidden" name="id" value={entry.id} />
 											<button
 												disabled={closed}
@@ -64,7 +71,7 @@ export const TimesheetTable = ({
 												className="disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 p-0 flex items-center justify-center hover:bg-gray-100 rounded "
 											>
 												<span className="sr-only">Delete entry</span>
-												<TrashIcon className="h-4 w-4" />
+												<TrashIcon color="black" className="h-4 w-4" />
 											</button>
 										</form>
 									</td>
@@ -83,7 +90,9 @@ export const TimesheetTable = ({
 				<div className="flex justify-end">
 					<div className="text-right">
 						<div className="text-sm text-gray-500">Total Amount</div>
-						<div className="text-2xl font-bold">${totalAmount.toFixed(2)}</div>
+						<div className="text-2xl font-bold dark:text-white text-black">
+							${totalAmount.toFixed(2)}
+						</div>
 					</div>
 				</div>
 			)}

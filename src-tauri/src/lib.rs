@@ -1,10 +1,8 @@
-use tauri_plugin_sql::{Migration, MigrationKind};
+mod demo_functions;
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+use demo_functions::greet;
+use tauri::Manager;
+use tauri_plugin_sql::{Migration, MigrationKind};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -16,28 +14,18 @@ pub fn run() {
     }];
 
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_stronghold::Builder::new(|password| {
-                // Hash the password here with e.g. argon2, blake2b or any other secure algorithm
-                // Here is an example implementation using the `rust-argon2` crate for hashing the password
-                use argon2::{hash_raw, Config, Variant, Version};
+        .setup(|app| {
+            let salt_path = app
+                .path()
+                .app_local_data_dir()
+                .expect("could not resolve app local data path")
+                .join("salt.txt");
 
-                let config = Config {
-                    lanes: 4,
-                    mem_cost: 10_000,
-                    time_cost: 10,
-                    variant: Variant::Argon2id,
-                    version: Version::Version13,
-                    ..Default::default()
-                };
-                let salt = "your-salt".as_bytes();
-                let key =
-                    hash_raw(password.as_ref(), salt, &config).expect("failed to hash password");
+            app.handle()
+                .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
 
-                key.to_vec()
-            })
-            .build(),
-        )
+            Ok(())
+        })
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:simple-timesheet.db", migrations)

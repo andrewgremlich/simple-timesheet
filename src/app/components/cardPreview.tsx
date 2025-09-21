@@ -1,21 +1,22 @@
-import { Card } from "./card";
-import { H3, P } from "./htmlElements";
+import { Card } from "./Card";
+import { H3, P } from "./HtmlElements";
 
 export const CardPreview = ({
-	title,
+	name,
 	description,
-	url,
+	action,
 }: {
-	title: string;
+	name: string;
 	description: string;
-	url: string;
+	action: () => void;
 }) => {
 	return (
-		<a href={url} className="block mb-4">
-			<Card className="p-4 hover:shadow-lg transition-shadow">
-				<H3>{title}</H3>
-				<P>{description}</P>
-			</Card>
-		</a>
+		<Card
+			className="p-4 mb-4 transition-shadow cursor-pointer"
+			onClick={action}
+		>
+			<H3>{name}</H3>
+			<P>{description}</P>
+		</Card>
 	);
 };

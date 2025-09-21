@@ -1,9 +1,12 @@
-import { format } from "date-fns";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
-import { createTimesheetRecord } from "@/lib/actions";
+
+import { createTimesheetRecord } from "../lib/dbClient";
+
 // import { Timer, TimerOff } from "lucide-react";
 
-import { Label } from "./label";
+import { formatDate } from "@/lib/utils";
+import { Label } from "./Label";
 
 export const CreateTimesheetRecord = ({
 	timesheetId,
@@ -14,8 +17,25 @@ export const CreateTimesheetRecord = ({
 	rate: number;
 	closed: boolean;
 }) => {
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation({
+		mutationFn: async (formData: FormData) => {
+			await createTimesheetRecord(formData);
+			await queryClient.invalidateQueries({
+				queryKey: ["timesheet", timesheetId],
+			});
+		},
+	});
+
 	return (
-		<form action={createTimesheetRecord}>
+		<form
+			onSubmit={(evt) => {
+				evt.preventDefault();
+				const formData = new FormData(evt.currentTarget);
+				mutate(formData);
+				evt.currentTarget.reset();
+			}}
+		>
 			<input type="hidden" name="timesheetId" value={timesheetId} />
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
 				<div>
@@ -23,9 +43,9 @@ export const CreateTimesheetRecord = ({
 					<input
 						name="date"
 						type="date"
-						defaultValue={format(new Date(), "yyyy-MM-dd")}
+						defaultValue={formatDate(new Date())}
 						required
-						className="flex h-10 rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
+						className="flex h-10 rounded-md border border-input bg-white text-black px-3 py-2 text-sm placeholder:text-black"
 					/>
 				</div>
 				<div>

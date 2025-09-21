@@ -1,96 +1,92 @@
 import "./globals.css";
 
-import { invoke } from "@tauri-apps/api/core";
+import { useQuery } from "@tanstack/react-query";
+// import { invoke } from "@tauri-apps/api/core";
 
-import { CardPreview } from "@/components/cardPreview";
-import { GenerateProject } from "@/components/generateProject";
-import { H1, H2, Section } from "@/components/htmlElements";
-import { useEffect, useState } from "react";
-import {
-	getAllCustomers,
-	getAllProjects,
-	getAllTimesheets,
-} from "./lib/actions";
-import { useSimpletimesheetStore } from "./lib/store";
-import type { Customer, Project, Timesheet } from "./lib/types";
+import { CardPreview } from "@/components/CardPreview";
+import { GenerateProject } from "@/components/GenerateProject";
+import { H1, H2, P, Section } from "@/components/HtmlElements";
+import { getAllProjects, getAllTimesheets } from "@/lib/dbClient";
+import { useSimpletimesheetStore } from "@/lib/store";
+import { getAllCustomers } from "@/lib/stripeHttpClient";
+import { getStripeSecretKey } from "@/lib/stronghold";
 
 export const App = () => {
-	const { stripeKey } = useSimpletimesheetStore();
-	const [allProjects, setAllProjects] = useState<Project[]>([]);
-	const [allTimesheets, setAllTimesheets] = useState<Timesheet[]>([]);
-	const [customers, setCustomers] = useState<Customer[]>([]);
+	const { toggleProjectModal, toggleTimesheetModal } =
+		useSimpletimesheetStore();
+	const { data: dashboardData } = useQuery({
+		queryKey: ["dashboardData"],
+		queryFn: async () => {
+			const dataz = await Promise.all([getAllProjects(), getAllTimesheets()]);
+			return { projects: dataz[0], timesheets: dataz[1] };
+		},
+	});
+	const { data: customers } = useQuery({
+		queryKey: ["customers"],
+		queryFn: async () => {
+			const key = await getStripeSecretKey();
+			if (key) {
+				return getAllCustomers(key);
+			}
+			return [];
+		},
+	});
 
-	useEffect(() => {
-		if (!stripeKey) return;
-		getAllCustomers(stripeKey).then((customers) => setCustomers(customers));
-	}, [stripeKey]);
+	// const [greetMsg, setGreetMsg] = useState("");
+	// const [name, setName] = useState("");
 
-	useEffect(() => {
-		getAllProjects().then((projects) => setAllProjects(projects));
-		getAllTimesheets().then((timesheets) => setAllTimesheets(timesheets));
-	}, []);
-
-	const [greetMsg, setGreetMsg] = useState("");
-	const [name, setName] = useState("");
-
-	async function greet() {
-		// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-		setGreetMsg(await invoke("greet", { name }));
-	}
+	// async function greet() {
+	// 	// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+	// 	setGreetMsg(await invoke("greet", { name }));
+	// }
 
 	return (
 		<div className="container mx-auto py-25 max-w-prose">
 			<H1>Simple Timesheet</H1>
-			<input
+			{/* <input
 				onChange={(e) => setName(e.currentTarget.value)}
 				placeholder="Enter a name..."
 			/>
 			<button type="button" onClick={greet}>
 				Greet
 			</button>
-			<p>{greetMsg}</p>
+			<p>{greetMsg}</p> */}
 			<Section>
-				<p className="text-gray-700">
+				<P>
 					A simple timesheet that integrates with Stripe in order to send
 					invoices.
-				</p>
+				</P>
 			</Section>
 
-			{allTimesheets.length > 0 && (
+			{dashboardData && dashboardData.timesheets.length > 0 && (
 				<Section>
 					<H2>All Timesheets</H2>
 
-					{allTimesheets.map((timesheet) => (
+					{dashboardData.timesheets.map((timesheet) => (
 						<CardPreview
 							key={timesheet.id}
-							title={`${timesheet.closed ? "✅ " : "❌ "}${timesheet.projectName} - ${timesheet.name}`}
-							description={
-								timesheet.projectDescription ?? "No description provided"
-							}
-							url={`/timesheet?timesheetId=${timesheet.id}`}
+							name={timesheet.name}
+							description={timesheet.description ?? "No description provided"}
+							action={() => {
+								toggleTimesheetModal({ timesheetId: timesheet.id });
+								console.log("Clicked timesheet", timesheet.id);
+							}}
 						/>
 					))}
 				</Section>
 			)}
 
-			<Section>
-				<dl>
-					<dt>✅</dt>
-					<dd>Closed</dd>
-					<dt>❌</dt>
-					<dd>Open</dd>
-				</dl>
-			</Section>
-
-			{allProjects.length > 0 && (
+			{dashboardData && dashboardData.projects.length > 0 && (
 				<Section>
 					<H2>Projects</H2>
-					{allProjects.map((project) => (
+					{dashboardData.projects.map((project) => (
 						<CardPreview
 							key={project.id}
-							title={project.name}
+							name={project.name}
 							description={project.description ?? "No description provided"}
-							url={`/project?projectId=${project.id}`}
+							action={() => {
+								toggleProjectModal({ projectId: project.id });
+							}}
 						/>
 					))}
 				</Section>

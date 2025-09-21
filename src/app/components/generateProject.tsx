@@ -1,25 +1,34 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 // import { generateProject } from "@/lib/actions";
-import { generateProject } from "../lib/actions";
+import { generateProject } from "../lib/dbClient";
 import { useSimpletimesheetStore } from "../lib/store";
 import type { Customer } from "../lib/types";
-import { Label } from "./label";
+import { Label } from "./Label";
 
-export const GenerateProject = ({ customers }: { customers: Customer[] }) => {
+export const GenerateProject = ({ customers }: { customers?: Customer[] }) => {
+	const queryClient = useQueryClient();
 	const { addProject, addTimesheet } = useSimpletimesheetStore();
+	const { mutate } = useMutation({
+		mutationFn: async (formData: FormData) => {
+			return generateProject(formData);
+		},
+		onSuccess: async ({ project, timesheet }) => {
+			addProject(project);
+			addTimesheet(timesheet);
+
+			await queryClient.invalidateQueries({ queryKey: ["dashboardData"] });
+		},
+	});
 
 	return (
 		<form
 			className="grid grid-cols-3 gap-6"
 			onSubmit={(e) => {
 				e.preventDefault();
-
 				const formData = new FormData(e.currentTarget);
-
-				generateProject(formData).then(({ project, timesheet }) => {
-					console.log({ project, timesheet });
-					addProject(project);
-					addTimesheet(timesheet);
-				});
+				mutate(formData);
+				e.currentTarget.reset();
 			}}
 		>
 			<div className="col-span-3">
@@ -49,11 +58,13 @@ export const GenerateProject = ({ customers }: { customers: Customer[] }) => {
 					className="flex h-10 rounded-md border border-input bg-white px-3 py-2 text-sm placeholder:text-slate-500 text-slate-900"
 				>
 					<option value="">Select a customer</option>
-					{customers.map((customer) => (
-						<option key={customer.id} value={customer.id}>
-							{customer.name} ({customer.email})
-						</option>
-					))}
+					{customers &&
+						customers.length > 0 &&
+						customers.map((customer) => (
+							<option key={customer.id} value={customer.id}>
+								{customer.name} ({customer.email})
+							</option>
+						))}
 				</select>
 			</div>
 			<div className="col-span-3">

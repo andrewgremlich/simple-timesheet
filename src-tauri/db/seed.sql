@@ -1,6 +1,5 @@
--- Seed migration for SQLite based on Prisma schema
 CREATE TABLE IF NOT EXISTS projects (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'active',
   customerId TEXT,
@@ -10,8 +9,8 @@ CREATE TABLE IF NOT EXISTS projects (
   updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS timesheets (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  projectId INTEGER NOT NULL,
+  id TEXT PRIMARY KEY,
+  projectId TEXT NOT NULL,
   invoiceId TEXT,
   name TEXT NOT NULL,
   description TEXT,
@@ -21,8 +20,8 @@ CREATE TABLE IF NOT EXISTS timesheets (
   FOREIGN KEY (projectId) REFERENCES projects(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS timesheet_records (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  timesheetId INTEGER NOT NULL,
+  id TEXT PRIMARY KEY,
+  timesheetId TEXT NOT NULL,
   date DATETIME NOT NULL,
   hours REAL NOT NULL,
   description TEXT NOT NULL,

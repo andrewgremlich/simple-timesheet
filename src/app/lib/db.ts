@@ -1,4 +1,3 @@
-
 import Database from "@tauri-apps/plugin-sql";
 
 // In Tauri v2 the SQL plugin must be loaded via Database.load().
@@ -31,4 +30,3 @@ export async function select<T = unknown>(sql: string, params: unknown[] = []) {
 
 // If you still import { db } in legacy code, you can (temporarily) do:
 // const db = await getDb(); inside the function that uses it.
-
