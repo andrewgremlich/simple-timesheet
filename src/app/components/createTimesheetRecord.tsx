@@ -7,6 +7,7 @@ import { createTimesheetRecord } from "../lib/dbClient";
 
 import { formatDate } from "@/lib/utils";
 import { Label } from "./Label";
+import { format } from "date-fns";
 
 export const CreateTimesheetRecord = ({
 	timesheetId,
@@ -43,7 +44,7 @@ export const CreateTimesheetRecord = ({
 					<input
 						name="date"
 						type="date"
-						defaultValue={formatDate(new Date())}
+						defaultValue={format(new Date(), "yyyy-MM-dd")}
 						required
 						className="flex h-10 rounded-md border border-input bg-white text-black px-3 py-2 text-sm placeholder:text-black"
 					/>
