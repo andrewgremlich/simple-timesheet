@@ -3,9 +3,9 @@ import "./globals.css";
 import { useQuery } from "@tanstack/react-query";
 // import { invoke } from "@tauri-apps/api/core";
 
-import { CardPreview } from "@/components/CardPreview";
-import { GenerateProject } from "@/components/GenerateProject";
-import { H1, H2, P, Section } from "@/components/HtmlElements";
+import { CardPreview } from "@/components/cardPreview";
+import { GenerateProject } from "@/components/generateProject";
+import { H1, H2, P, Section } from "@/components/htmlElements";
 import { getAllProjects, getAllTimesheets } from "@/lib/dbClient";
 import { useSimpletimesheetStore } from "@/lib/store";
 import { getAllCustomers } from "@/lib/stripeHttpClient";

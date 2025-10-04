@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { useId, useRef } from "react";
 import { useSimpletimesheetStore } from "../lib/store";
 import { Dialog } from "./Dialog";
-import { H2, P } from "./HtmlElements";
+import { H2, P } from "./htmlElements";
 import { StripeSecretSection } from "./StripeSecretSection";
 
 export const SettingsModal = () => {

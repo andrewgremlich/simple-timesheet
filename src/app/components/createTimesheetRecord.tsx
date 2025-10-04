@@ -1,13 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlusIcon } from "lucide-react";
-
-import { createTimesheetRecord } from "../lib/dbClient";
-
-// import { Timer, TimerOff } from "lucide-react";
-
-import { formatDate } from "@/lib/utils";
-import { Label } from "./Label";
 import { format } from "date-fns";
+import { PlusIcon } from "lucide-react";
+import { createTimesheetRecord } from "../lib/dbClient";
+import { Label } from "./label";
 
 export const CreateTimesheetRecord = ({
 	timesheetId,

@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { Label } from "./Label";
+import { Label } from "./label";
 
 export const TimesheetName = () => {
 	const [name, setName] = useState("");

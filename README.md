@@ -2,6 +2,10 @@
 
 A simple timesheet that integrates with Stripe in order to send invoices.
 
+## BUGS
+
+- Generate new timesheet doesn't update the homescreen.
+
 ## Setup
 
 Create a `.env` file with the following variables. You will need to setup a Stripe Account and file the secret key in the developer dashboard.

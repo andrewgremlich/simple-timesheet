@@ -3,9 +3,9 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { Nav } from "@/components/Nav";
+import { Nav } from "@/components/nav";
 import { ProjectModal } from "@/components/ProjectModal";
-import { SettingsModal } from "@/components/SettingsModal";
+import { SettingsModal } from "@/components/settingsModal";
 import { TimesheetModal } from "@/components/TimesheetModal";
 
 import { App } from "@/index";

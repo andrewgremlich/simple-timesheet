@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { generateProject } from "../lib/dbClient";
 import { useSimpletimesheetStore } from "../lib/store";
 import type { Customer } from "../lib/types";
-import { Label } from "./Label";
+import { Label } from "./label";
 
 export const GenerateProject = ({ customers }: { customers?: Customer[] }) => {
 	const queryClient = useQueryClient();
