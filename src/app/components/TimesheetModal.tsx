@@ -15,12 +15,8 @@ export const TimesheetModal = () => {
 		useSimpletimesheetStore();
 	const { data: timesheet } = useQuery({
 		queryKey: ["timesheet", activeTimesheetId],
-		queryFn: () => {
-			if (activeTimesheetId) {
-				return getTimesheetById(activeTimesheetId);
-			}
-			return null;
-		},
+		queryFn: () =>
+			activeTimesheetId ? getTimesheetById(activeTimesheetId) : null,
 		enabled: !!activeTimesheetId,
 	});
 	const { data: invoiceData } = useQuery({

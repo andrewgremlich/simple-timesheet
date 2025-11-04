@@ -1,3 +1,8 @@
+export enum ProjectPageTab {
+	Timesheet = "Timesheet",
+	FileStorage = "FileStorage",
+}
+
 export interface Customer {
 	id: string;
 	name: string;
