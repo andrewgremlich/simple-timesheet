@@ -9,6 +9,7 @@ import { SettingsModal } from "@/components/SettingsModal";
 import { TimesheetModal } from "@/components/TimesheetModal";
 
 import { App } from "@/index";
+import { PageWrapper } from "@/components/PageWrapper";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,9 @@ createRoot(rootElement).render(
 					</div>
 				)}
 			>
-				<App />
+				<PageWrapper>
+					<App />
+				</PageWrapper>
 			</ErrorBoundary>
 		</QueryClientProvider>
 	</StrictMode>,

@@ -1,7 +1,6 @@
 import { readDir, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { useEffect } from "react";
 import { H1 } from "./components/HtmlElements";
-import { PageWrapper } from "./components/PageWrapper";
 
 export const FileStorage = () => {
 	useEffect(() => {
@@ -23,8 +22,8 @@ export const FileStorage = () => {
 	}, []);
 
 	return (
-		<PageWrapper>
+		<>
 			<H1>Storage</H1>
-		</PageWrapper>
+		</>
 	);
 };

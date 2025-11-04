@@ -10,7 +10,6 @@ import { getAllProjects, getAllTimesheets } from "@/lib/dbClient";
 import { useSimpletimesheetStore } from "@/lib/store";
 import { getAllCustomers } from "@/lib/stripeHttpClient";
 import { getStripeSecretKey } from "@/lib/stronghold";
-import { PageWrapper } from "./components/PageWrapper";
 
 export const Timesheet = () => {
 	const { toggleProjectModal, toggleTimesheetModal } =
@@ -42,7 +41,7 @@ export const Timesheet = () => {
 	// }
 
 	return (
-		<PageWrapper>
+		<>
 			<H1>Simple Timesheet</H1>
 			{/* <input
 				onChange={(e) => setName(e.currentTarget.value)}
@@ -96,6 +95,6 @@ export const Timesheet = () => {
 				<H2>New Project</H2>
 				<GenerateProject customers={customers} />
 			</Section>
-		</PageWrapper>
+		</>
 	);
 };
