@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Label } from "./label";
+import { Label } from "./Label";
 
 export const TimesheetName = () => {
 	const [name, setName] = useState("");

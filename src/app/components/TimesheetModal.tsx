@@ -3,11 +3,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { generateInvoice, getTimesheetById } from "../lib/dbClient";
 import { useSimpletimesheetStore } from "../lib/store";
 import { getInvoice, markInvoiceAsPaid } from "../lib/stripeHttpClient";
-import { Card, CardContent, CardFooter, CardHeader } from "./card";
-import { CreateTimesheetRecord } from "./createTimesheetRecord";
+import { Card, CardContent, CardFooter, CardHeader } from "./Card";
+import { CreateTimesheetRecord } from "./CreateTimesheetRecord";
 import { Dialog } from "./Dialog";
-import { H1, P } from "./htmlElements";
-import { TimesheetTable } from "./timesheetTable";
+import { H1, P } from "./HtmlElements";
+import { TimesheetTable } from "./TimesheetTable";
 
 export const TimesheetModal = () => {
 	const queryClient = useQueryClient();

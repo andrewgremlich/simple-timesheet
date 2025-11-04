@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { PlusIcon } from "lucide-react";
 import { createTimesheetRecord } from "../lib/dbClient";
-import { Label } from "./label";
+import { Label } from "./Label";
 
 export const CreateTimesheetRecord = ({
 	timesheetId,

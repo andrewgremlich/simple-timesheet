@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { generateTimesheet, getProjectById } from "../lib/dbClient";
 import { useSimpletimesheetStore } from "../lib/store";
-import { CardContent, CardHeader } from "./card";
-import { CardPreview } from "./cardPreview";
+import { CardContent, CardHeader } from "./Card";
+import { CardPreview } from "./CardPreview";
 import { Dialog } from "./Dialog";
-import { H2, P, Section } from "./htmlElements";
-import { Label } from "./label";
-import { TimesheetName } from "./timesheetName";
+import { H2, P, Section } from "./HtmlElements";
+import { Label } from "./Label";
+import { TimesheetName } from "./TimesheetName";
 
 export const ProjectModal = () => {
 	const queryClient = useQueryClient();
