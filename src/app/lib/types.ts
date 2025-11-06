@@ -1,6 +1,7 @@
 export enum ProjectPageTab {
 	Timesheet = "Timesheet",
 	FileStorage = "FileStorage",
+	Accounting = "Accounting",
 }
 
 export interface Customer {

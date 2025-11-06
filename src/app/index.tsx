@@ -1,3 +1,4 @@
+import { Accounting } from "./Accounting";
 import { FileStorage } from "./FileStorage";
 import { useSimpletimesheetStore } from "./lib/store";
 import { ProjectPageTab } from "./lib/types";
@@ -11,6 +12,8 @@ export const App = () => {
 			return <Timesheet />;
 		case ProjectPageTab.FileStorage:
 			return <FileStorage />;
+		case ProjectPageTab.Accounting:
+			return <Accounting />;
 		default:
 			return <Timesheet />;
 	}
